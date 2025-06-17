@@ -201,7 +201,7 @@ class MagnusBilling
         return $this->query(
             array(
                 'module' => "call",
-                'action' => "downloadRecord",
+                'action' => "downloadRecordTwo",
                 'page'   => $page = 1,
                 'start'  => $page == 1 ? 0 : ($page - 1) * $limit,
                 'limit'  => $limit = 25,
