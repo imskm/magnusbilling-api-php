@@ -26,6 +26,7 @@ class MagnusBilling
     protected $api_secret;
     public $public_url;
     public $filter = [];
+    public $columns = [];
 
     public function __construct($api_key, $api_secret)
     {
@@ -132,17 +133,19 @@ class MagnusBilling
     }
     public function read($module, $page = 1, $action = 'read', $limit = 25)
     {
+        $query = [
+            'module' => $module,
+            'action' => $action,
+            'page'   => $page,
+            'start'  => $page == 1 ? 0 : ($page - 1) * $limit,
+            'limit'  => $limit,
+            'filter' => json_encode($this->filter),
+        ];
+        if (isset($this->columns[0])) {
+            $query['columns'] = json_encode($this->columns);
+        }
 
-        return $this->query(
-            array(
-                'module' => $module,
-                'action' => $action,
-                'page'   => $page,
-                'start'  => $page == 1 ? 0 : ($page - 1) * $limit,
-                'limit'  => $limit,
-                'filter' => json_encode($this->filter),
-            )
-        );
+        return $this->query($query);
     }
 
     public function buyDID($id_did, $id_user)
@@ -283,6 +286,14 @@ class MagnusBilling
             'field'      => $field,
             'value'      => $value,
             'comparison' => $comparison,
+        ];
+    }
+
+    public function setColumn($header, $field)
+    {
+        $this->columns[] = (object) [
+            'header' => $header,
+            'dataIndex' => $field,
         ];
     }
 }
