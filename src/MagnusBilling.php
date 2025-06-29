@@ -214,6 +214,24 @@ class MagnusBilling
         );
     }
 
+    public function downloadResource($module, $action, $limit, $stream_cb)
+    {
+        $query = [
+            'module' => $module,
+            'action' => $action,
+            'page'   => $page = 1,
+            'start'  => $page == 1 ? 0 : ($page - 1) * $limit,
+            'limit'  => $limit,
+            'filter' => json_encode($this->filter),
+            'write_cb' => $stream_cb,
+        ];
+        if (isset($this->columns[0])) {
+            $query['columns'] = json_encode($this->columns);
+        }
+
+        return $this->query($query);
+    }
+
     public function getFields($module)
     {
         return $this->query(
